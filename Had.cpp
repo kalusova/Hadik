@@ -1,45 +1,12 @@
 // C program to build the complete
 // snake game
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <unistd.h>
 
-#define RESET   "\033[0m"
-#define BLACK   "\033[30m"      /* Black */
-#define RED     "\033[31m"      /* Red */
-#define GREEN   "\033[32m"      /* Green */
-#define YELLOW  "\033[33m"      /* Yellow */
-#define BLUE    "\033[34m"      /* Blue */
-#define MAGENTA "\033[35m"      /* Magenta */
-#define CYAN    "\033[36m"      /* Cyan */
-#define WHITE   "\033[37m"      /* White */
-#define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
-#define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
-#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
-#define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
-#define BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
-#define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
-#define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
-#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
 //std::cout << RED << "hello world" << RESET << std::endl;
 
-// Function to generate the fruit
-// within the boundary
-class Had{
-private:
-    int height = 20, width = 20;
-    int x, y, fruitx, fruity, flag;
-public:
-    int gameover, score;
-    Had();
-    void start();
-    void setup();
-    void draw();
-    void input();
-    void logic();
-};
+
+
+#include "Had.h"
 
 Had::Had(){
 }
@@ -60,27 +27,37 @@ void Had::start(){
     }
 }
 
-void Had::setup()
-{
+// Function to generate the fruit
+// within the boundary
+void Had::setup(){
     gameover = 0;
-
-    // Stores height and width
     x = height / 2;
     y = width / 2;
-    label1:
-    fruitx = rand() % 20;
-    if (fruitx == 0)
-        goto label1;
-    label2:
-    fruity = rand() % 20;
-    if (fruity == 0)
-        goto label2;
+
+    fruitx = rand() % (width-2)+1;
+    fruity = rand() % (height-2)+1;
     score = 0;
 }
 
 // Function to draw the boundaries
-void Had::draw()
-{
+std::string Had::draw(){
+    naplneniePola();
+
+    std::string plocha = "";
+    for (int k = 0; k < height; ++k) {
+        for (int l = 0; l < width; ++l) {
+            plocha += hraciaPlocha[l][k];
+        }
+        plocha += "\n";
+    }
+    plocha += "Skore je: ";
+    plocha += std::to_string(score);
+    plocha += "\n";
+    plocha += "press X to quit the game\n";
+    return plocha + "\n";
+}
+
+void Had::naplneniePola(){
     int i, j;
     system("clear");
     for (i = 0; i < height; i++) {
@@ -88,26 +65,18 @@ void Had::draw()
             if (i == 0 || i == width - 1
                 || j == 0
                 || j == height - 1) {
-                printf("#");
-            }
-            else {
+                hraciaPlocha[i][j] = "#";
+            } else {
                 if (i == x && j == y)
-                    printf("0");
+                    hraciaPlocha[i][j] = "0"; // PREROBIT NA SIPKU
                 else if (i == fruitx
                          && j == fruity)
-                    printf("*");
+                    hraciaPlocha[i][j] = "?";
                 else
-                    printf(" ");
+                    hraciaPlocha[i][j] = " ";
             }
         }
-        printf("\n");
     }
-
-    // Print the score after the
-    // game ends
-    printf("score = %d", score);
-    printf("\n");
-    printf("press X to quit the game\n");
 }
 
 // Function to take the input

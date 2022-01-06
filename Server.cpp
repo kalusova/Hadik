@@ -3,6 +3,7 @@
 //
 
 #include "Server.h"
+#include "Had.h"
 
 Server::Server(){
     pocetHracov = 0;
@@ -16,18 +17,17 @@ struct thread_data {
 
 int Server::makeServer(char const* port)
 {
-    char buffer[256];
+    char buffer[500];
     int sockfd, newsockfd;
     socklen_t cli_len;
     struct sockaddr_in serv_addr, cli_addr;
     int n;
-    bool koniec = false;
     std::string s;
 
     // ZISTOVANIE POCTU HRACOV
     printf("Prosím zadajte pocet hracov: \n(cislo od 1 do 4)");
-    bzero(buffer,256);
-    fgets(buffer, 255, stdin);
+    bzero(buffer,500);
+    fgets(buffer, 500, stdin);
 
     char znak = buffer[0];
     int cislo = znak - '0';
@@ -35,7 +35,7 @@ int Server::makeServer(char const* port)
     //KONTROLA spravne zadaneho cisla
     if (strlen(buffer)>2){
         printf("Zadana hodnota musi byt cislo! Skus znova. Ak znovu zadáš zle, hra sa vypne.\n");
-        fgets(buffer, 255, stdin);
+        fgets(buffer, 500, stdin);
         char znak = buffer[0];
         int cislo = znak - '0';
 
@@ -100,23 +100,14 @@ int Server::makeServer(char const* port)
         pthread_mutex_lock(threadData.mutex); //zamknutie mutexu kt. riadi pristup k datam - zabezpecenie jedinecneho pristupu
         threadData.socket = newsockfd; //socket pre dane vlakno
 
-        bzero(buffer,256);
-        n = read(newsockfd, buffer, 255);
-        if (n < 0)
-        {
-            perror("Error reading from socket");
-            return 4;
-        }
-        printf("Meno hraca cislo %d: %s\n",i+1, buffer);
-
         //informovanie klienta o tom ze sa este vsetci nepripojili
         if (i == pocetHracov-1){
             s = "Vsetci hraci pripojeni";
         } else {
             s = "Caka sa na pripojenie vsekych hracov!";
         }
-        bzero(buffer, 255);
-        for (int j = 0; j < 255; j++) {
+        bzero(buffer, 500);
+        for (int j = 0; j < 500; j++) {
             buffer[j] = s[j];
         }
         int n = write(newsockfd, buffer, strlen(buffer)); //posielanie
@@ -144,7 +135,39 @@ int Server::makeServer(char const* port)
 }
 
 void *Server::hra(void *thread_data) {
-    //printf("hra");
+    char buffer[500];
+    struct thread_data * data = (struct thread_data *) thread_data;
+    pthread_mutex_lock(data->mutex);
+    int socket = data->socket;
+    pthread_mutex_unlock(data->mutex);
+
+    bzero(buffer,500);
+    int n = read(socket, buffer, 500);
+    if (n < 0)
+    {
+        perror("Error reading from socket");
+        exit(4);
+    }
+    printf("Meno hraca: %s\n", buffer);
+
+    Had* hadik = new Had();
+    hadik->setup();
+    while(hadik->gameover != 1){
+        std::string plocha = hadik->draw();
+        bzero(buffer, 500);
+        for (int i = 0; i < 500; ++i) {
+            buffer[i] = plocha[i];
+        }
+
+        n = write(socket, buffer, strlen(buffer)); //posielanie
+        if (n < 0) {
+            perror("Error writing to socket");
+        }
+
+        hadik->input();
+        hadik->logic();
+    }
+
     return nullptr;
 }
 

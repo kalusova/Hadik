@@ -14,7 +14,7 @@ int Client::makeClient(const char* port, const char* host)
     struct hostent* server;
     bool koniec = false;
 
-    char buffer[256];
+    char buffer[500];
 
     //Použijeme funkciu gethostbyname na získanie informácii o počítači, ktorého hostname je v prvom argumente.
     server = gethostbyname(host);
@@ -50,8 +50,8 @@ int Client::makeClient(const char* port, const char* host)
     }
 
     printf("Prosim zadaj meno: ");
-    bzero(buffer,256);
-    fgets(buffer, 255, stdin);
+    bzero(buffer,500);
+    fgets(buffer, 500, stdin);
 
     n = write(sockfd, buffer, strlen(buffer));
     if (n < 0)
@@ -60,8 +60,18 @@ int Client::makeClient(const char* port, const char* host)
         return 5;
     }
 
-    bzero(buffer,256);
-    n = read(sockfd, buffer, 255);
+    bzero(buffer,500);
+    n = read(sockfd, buffer, 500);
+    if (n < 0)
+    {
+        perror("Error reading from socket");
+        return 6;
+    }
+
+    printf("%s\n",buffer);
+
+    bzero(buffer,500);
+    n = read(sockfd, buffer, 500);
     if (n < 0)
     {
         perror("Error reading from socket");

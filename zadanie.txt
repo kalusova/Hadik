@@ -4,34 +4,3 @@ hra môže skončiť podľa definovaných pravidiel (závisia od konkrétnej hry
 sa danému hráčovi zobrazíjeho výsledok.Námety na hry:•hadík,•bulanci,•človeče nehnevaj sa,•pong,•iné.Hra  môže  byť  implementovaná
 vtextovom  režime  (s  využitím  funkcií  zo  stdio.h,  alebo  vprípade  Linuxu svyužitím funkcií zncurses.h) alebo vgrafickom režime (napr. knižnica SDL).
 
-pthread_t clients [pocetHracov];
-    for (int i = 0; i < pocetHracov; i++) {
-        //blokuje server az pokym sa klient nepripoji
-        newsockfd = accept(sockfd, (struct sockaddr*) &cli_addr, &cli_len);
-        printf("client cislo %i sa PRIPOJIL\n", pocetPripojenych + 1);
-        pthread_mutex_lock(threadData.mutex);
-        threadData.poradie = i;
-        threadData.soketDescription = newsockfd;
-
-        //informovanie klienta o tom ze sa este vsetci nepripojili
-        stringstream pom;
-        pom << pocetHracov;
-        string s = "Hra sa este nezacala, server caká kým sa pripoja " + pom.str() + " hraci a kým sa spusti hra";
-        bzero(buffer, 1000);
-        for (int i = 0; i < 1000; i++) {
-            buffer[i] = s[i];
-        }
-        int n = write(newsockfd, buffer, strlen(buffer));
-        if (n < 0) {
-            perror("Error writing to socket");
-        }
-
-        pthread_mutex_unlock(threadData.mutex);
-        if (pthread_create(&clients[i], NULL, &serverThread, &threadData) != 0)
-            printf("Failed to create thread\n");
-        pocetPripojenych++;
-    }
-
-    for (int i = 0; i < pocetHracov; i++) {
-        pthread_join(clients[i], NULL);
-    }
