@@ -96,6 +96,10 @@ int Server::makeServer(char const* port)
     threadData.mutex = &mutex;
     threadData.logika = new Logika();
 
+    for(int i = 0; i < 4; i++){
+        threadData.body[i] =0 ;
+    }
+
     //vytvorenie tolkych vlakien kolko je pocet hracov
     pthread_t clients [this->pocetHracov];
     for (int i = 0; i < this->pocetHracov; i++) {
@@ -151,6 +155,7 @@ void *Server::hra(void *thread_data) {
     struct thread_data * data = (struct thread_data *) thread_data;
     pthread_mutex_lock(data->mutex);
     int socket = data->socket;
+
   //  pthread_mutex_unlock(data->mutex);
 
     bzero(buffer,1000);
