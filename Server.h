@@ -1,5 +1,5 @@
 //
-// Created by Katarína Kalusová on 05/01/2022.
+// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
 //
 
 #include <sys/types.h>

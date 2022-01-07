@@ -1,5 +1,5 @@
 //
-// Created by Katarína Kalusová on 05/01/2022.
+// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
 //
 
 #include "Server.h"
@@ -106,6 +106,10 @@ int Server::makeServer(char const* port)
         threadData.body[i][0] =0 ;
     }
 
+    for (int i = 0; i < 4; ++i) {
+        threadData.socket[i] = 0;
+    }
+
 
     //vytvorenie tolkych vlakien kolko je pocet hracov
     pthread_t clients [this->pocetHracov];
@@ -125,7 +129,7 @@ int Server::makeServer(char const* port)
             s = "Caka sa na pripojenie vsekych hracov!";
         }
         bzero(buffer, 1000);
-        for (int j = 0; j < 1000; j++) {
+        for (int j = 0; j < s.length(); j++) {
             buffer[j] = s[j];
         }
         int n = write(newsockfd, buffer, strlen(buffer)); //posielanie
@@ -169,7 +173,7 @@ int Server::makeServer(char const* port)
         } else {
             s = "REMIZA";
         }
-        for (int j = 0; j < 1000; j++) {
+        for (int j = 0; j < s.length(); j++) {
             buffer[j] = s[j];
         }
         n = write(threadData.socket[i], buffer, strlen(buffer)); //posielanie
@@ -178,8 +182,11 @@ int Server::makeServer(char const* port)
         }
     }
 
-    delete(&threadData.logika);
+    pthread_mutex_lock(threadData.mutex);
+    delete threadData.logika;
     threadData.logika = nullptr;
+    pthread_mutex_unlock(threadData.mutex);
+
     bzero(buffer, 1000);
     pthread_mutex_destroy(&mutex);
     printf("Server sa ukoncuje!\n");

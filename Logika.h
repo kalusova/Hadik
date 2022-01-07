@@ -1,5 +1,5 @@
 //
-// Created by Dominika Barbieriková & Katarína Kalusová on 30. 12. 2021.
+// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
 //
 #include <iostream>
 #include <stdio.h>
@@ -17,13 +17,6 @@ public:
     std::string printBorder();
     std::string **getPole();
     void vytvorOvocie();
-
-    ~Logika(){
-        for(int i = 0; i < 20; i++) {
-            delete[] pole[i];
-        }
-        delete[] pole;
-    }
 
     int getOvocieX() const;
 
