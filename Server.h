@@ -5,14 +5,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <unistd.h>
-#include <cctype>
 #include <pthread.h>
-#include <string>
-//#include "Ovocie.h"
 
 #ifndef UNTITLED5_SERVER_H
 #define UNTITLED5_SERVER_H
@@ -28,11 +22,6 @@ public:
     Server();
     int makeServer(const char* port);
     static void* hra(void * thread_data);
-
-    static int getPocetHracov() ;
-
-    static int getPocetPripojenych() ;
-
 };
 
 

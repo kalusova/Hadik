@@ -40,10 +40,6 @@ std::string **Logika::getPole() {
     return pole;
 }
 
-void Logika::setPole(std::string **pole) {
-    this->pole = pole;
-}
-
 void Logika::vytvorOvocie() {
     if(zjedeny== true){
       this->ovocieX = rand() % 17 + 1;

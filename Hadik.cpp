@@ -2,8 +2,6 @@
 // Created by Dominika Barbieriková & Katarína Kalusová on 29. 12. 2021.
 //
 
-
-
 #include "Hadik.h"
 
 #define RED      "\033[31m"     /* Red */
@@ -16,9 +14,7 @@ Hadik::Hadik(Logika *pPravidla) {
     this->y = 0;
     this->pole =  pPravidla->getPole();
     this->smer = "pravo";
-    this->dlzka = 0;
     this->pravidla = pPravidla;
-    this->koniec = false;
     this->body = 0;
     this->poradie = 0;
 }
@@ -29,14 +25,6 @@ void Hadik::setPoradie(int poradie) {
 
 int Hadik::getPoradie() const {
     return poradie;
-}
-
-const std::string &Hadik::getMeno() const {
-    return meno;
-}
-
-void Hadik::setMeno(const std::string &meno) {
-    Hadik::meno = meno;
 }
 
 void Hadik::goTo(int px, int py) {
@@ -136,32 +124,17 @@ bool Hadik::move(char znak) {
         return false;
 }
 
-std::string Hadik::getFarba() const {
-    return this->farba;
-}
-
 void Hadik::setFarba(const string &pfarba) {
     this->farba = pfarba;
 }
 
-int Hadik::getX() const {
-    return this->x;
-}
 
 void Hadik::setX(int px) {
     this->x = px;
 }
 
-int Hadik::getY() const {
-    return this->y;
-}
-
 void Hadik::setY(int py) {
     this->y = py;
-}
-
-void Hadik::pridajDlzku() {
-    this->dlzka++;
 }
 
 void Hadik::setSmer(char pSmer) {

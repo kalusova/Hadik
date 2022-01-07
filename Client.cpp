@@ -6,7 +6,6 @@
 #include "Client.h"
 
 Client::Client(){
-    this->points=0;
 }
 int Client::makeClient(const char* port, const char* host)
 {
@@ -75,10 +74,13 @@ int Client::makeClient(const char* port, const char* host)
 
     while(!koniec) {
 
-        if(buffer[0] == 'x' && strlen(buffer) == 2){
+        /*if((buffer[0] == 'x' || buffer[0] == 'X') && strlen(buffer) == 2){
             koniec = true;
             break;
         }
+*/
+        printf("W,A,S,D\n");
+        printf("pre ukončenie hry stlač X\n" );
 
         printf("Prosim zadaj klaves: ");
         bzero(buffer,1000);
@@ -91,7 +93,7 @@ int Client::makeClient(const char* port, const char* host)
             return 5;
         }
 
-        if(buffer[0] == 'x' && strlen(buffer) == 2){
+        if((buffer[0] == 'x' || buffer[0] == 'X')  && strlen(buffer) == 2){
             koniec = true;
             break;
         }

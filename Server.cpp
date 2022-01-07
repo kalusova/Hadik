@@ -11,7 +11,7 @@ Server::Server(){
 }
 
 struct thread_data {
-    volatile int socket[2];
+    volatile int socket[4];
     pthread_mutex_t *mutex;
     Logika* logika;
     int poradie;
@@ -179,6 +179,8 @@ int Server::makeServer(char const* port)
     }
 
     delete(&threadData.logika);
+    threadData.logika = nullptr;
+    bzero(buffer, 1000);
     pthread_mutex_destroy(&mutex);
     printf("Server sa ukoncuje!\n");
     close(newsockfd);
@@ -188,7 +190,6 @@ int Server::makeServer(char const* port)
 }
 
 void *Server::hra(void *thread_data) {
-
     char buffer[1000];
     bool koniec = false;
     struct thread_data * data = (struct thread_data *) thread_data;
@@ -196,8 +197,6 @@ void *Server::hra(void *thread_data) {
     int socket = data->socket[data->poradie];
 
     Hadik* hadik = new Hadik(data->logika);
-
-    hadik->setMeno(buffer);
 
     switch(data->poradie){
         case 0:
@@ -246,7 +245,7 @@ void *Server::hra(void *thread_data) {
                 exit(4);
             }
 
-            if (buffer[0] == 'x' && strlen(buffer) == 2) {
+            if ((buffer[0] == 'x' || buffer[0] == 'X') && strlen(buffer) == 2) {
                 koniec = true;
                 pthread_mutex_lock(data->mutex);
                 data->body[hadik->getPoradie()][0] = hadik->getPoradie();
@@ -260,6 +259,7 @@ void *Server::hra(void *thread_data) {
             }
         }
     }
+    delete(hadik);
     return nullptr;
 }
 

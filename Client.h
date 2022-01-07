@@ -17,10 +17,6 @@
 
 class Client {
 private:
-    std::string name;
-    int cislo;
-    int points;
-
 public:
     Client();
     int makeClient(const char* port, const char* host);

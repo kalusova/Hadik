@@ -1,8 +1,6 @@
 //
 // Created by Dominika Barbieriková & Katarína Kalusová on 29. 12. 2021.
 //
-#include <string>
-#include <iostream>
 #include <unistd.h>
 #include "Logika.h"
 
@@ -15,41 +13,35 @@ class Hadik{
 public:
     explicit Hadik( Logika *pPravidla);
     bool move(char znak);
-    std::string getFarba() const;
     void setFarba(const std::string &pfarba);
-    int getX() const;
     void setX(int px);
-    int getY() const;
     void setY(int py);
     void goTo(int px, int py);
-    void pridajDlzku();
     void setSmer(char pSmer);
     void vlozDoPola();
     int getBodyCislo();
     std::string getBody() const;
-
     void setPoradie(int poradie);
-
     int getPoradie() const;
-
-    const std::string &getMeno() const;
-
-    void setMeno(const std::string &meno);
     void setXY(int pX, int pY);
+    ~Hadik(){
+        for(int i = 0; i < 20; i++) {
+            delete[] pole[i];
+        }
+        delete[] pole;
+        //delete(pravidla);
+        pravidla = nullptr;
+    }
 
 private:
     int x;
     int y;
-    int dlzka;
     std::string** pole;
     std::string smer;
     std::string farba;
     Logika *pravidla;
     int body;
-    bool koniec;
     int poradie;
-    std::string meno;
-
 };
 
 #endif //SEMESTRALKA_HADIK_H

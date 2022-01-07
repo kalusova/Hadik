@@ -15,9 +15,7 @@ class Logika {
 public:
     Logika();
     std::string printBorder();
-    //std::string vypisPole();
     std::string **getPole();
-    void setPole(std::string **pole);
     void vytvorOvocie();
 
     ~Logika(){
