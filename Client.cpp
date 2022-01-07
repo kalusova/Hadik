@@ -69,16 +69,49 @@ int Client::makeClient(const char* port, const char* host)
     }
 
     printf("%s\n",buffer);
+sleep(2);
+    system("clear");
 
-    bzero(buffer,500);
+
+
+    bzero(buffer, 500);
     n = read(sockfd, buffer, 500);
-    if (n < 0)
-    {
+    if (n < 0) {
         perror("Error reading from socket");
         return 6;
     }
 
-    printf("%s\n",buffer);
+    printf("%s\n", buffer);
+
+
+    while(!koniec) {
+        printf("Prosim zadaj klaves: ");
+        bzero(buffer,500);
+        fgets(buffer, 500, stdin);
+
+        n = write(sockfd, buffer, strlen(buffer));
+        if (n < 0)
+        {
+            perror("Error writing to socket");
+            return 5;
+        }
+
+        if(buffer[0] == 'x' && strlen(buffer) == 2){
+            koniec = true;
+            break;
+        }
+
+        system("clear");
+        bzero(buffer, 500);
+        n = read(sockfd, buffer, 500);
+        if (n < 0) {
+            perror("Error reading from socket");
+            return 6;
+        }
+
+        printf("%s\n", buffer);
+    }
+
 
     close(sockfd);
     return 0;

@@ -13,6 +13,9 @@ Server::Server(){
 struct thread_data {
     volatile int socket;
     pthread_mutex_t *mutex;
+    int suradniceHad [4][2];
+    int ovocieX;
+    int ovocieY;
 };
 
 int Server::makeServer(char const* port)
@@ -164,9 +167,19 @@ void *Server::hra(void *thread_data) {
             perror("Error writing to socket");
         }
 
-        hadik->input();
+        bzero(buffer,500);
+        n = read(socket, buffer, 500);
+        if (n < 0)
+        {
+            perror("Error reading from socket");
+            exit(4);
+        }
+      //  printf("klaves: %c", buffer[0]);
+
+
+        hadik->input(buffer[0]);
         hadik->logic();
-    }
+   }
 
     return nullptr;
 }

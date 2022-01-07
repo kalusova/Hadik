@@ -39,7 +39,7 @@ public:
     void start();
     void setup();
     std::string draw();
-    void input();
+    void input(char znak);
     void logic();
     void naplneniePola();
 };

@@ -22,7 +22,7 @@ void Had::start(){
 
         // Function Call
         draw();
-        input();
+        input('a');
         logic();
     }
 }
@@ -59,7 +59,7 @@ std::string Had::draw(){
 
 void Had::naplneniePola(){
     int i, j;
-    system("clear");
+ //   system("clear");
     for (i = 0; i < height; i++) {
         for (j = 0; j < width; j++) {
             if (i == 0 || i == width - 1
@@ -80,10 +80,9 @@ void Had::naplneniePola(){
 }
 
 // Function to take the input
-void Had::input()
+void Had::input(char znak)
 {
-    if (1) { //??????????????????????????????????????
-        switch (getchar()) {
+        switch (znak) {
             case 'a':
                 flag = 1;
                 break;
@@ -100,7 +99,6 @@ void Had::input()
                 gameover = 1;
                 break;
         }
-    }
 }
 
 // Function for the logic behind
@@ -110,16 +108,16 @@ void Had::logic()
     sleep(0.01);
     switch (flag) {
         case 1:
-            y--;
+            x--;
             break;
         case 2:
-            x++;
-            break;
-        case 3:
             y++;
             break;
+        case 3:
+            x++;
+            break;
         case 4:
-            x--;
+            y--;
             break;
         default:
             break;
