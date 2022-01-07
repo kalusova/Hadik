@@ -1,5 +1,5 @@
 //
-// Created by Dominika Barbieriková & Katarína Kalusová on 30/12/2020.
+// Created by Dominika Barbieriková & Katarína Kalusová on 30. 12. 2021.
 //
 
 #include "Logika.h"

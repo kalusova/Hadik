@@ -14,7 +14,6 @@ struct thread_data {
     volatile int socket[2];
     pthread_mutex_t *mutex;
     Logika* logika;
-    std::string farba;
     int poradie;
     int body[4][2];
     int pocetHrac;
@@ -87,9 +86,6 @@ int Server::makeServer(char const* port)
         return 2;
     }
 
-
-
-
     //Pripravíme socket pre príjmanie spojení od klientov. Maximálna dĺžka fronty neobslúžených spojení je 4.
     listen(sockfd, 4);
     cli_len = sizeof(cli_addr);
@@ -149,7 +145,14 @@ int Server::makeServer(char const* port)
         }
     }
 
-
+  /*  if(buffer[0] == 'x' && strlen(buffer) == 2){
+        for (int i = 0; i < 2; ++i) {
+            n = write(threadData.socket[i], buffer, strlen(buffer)); //posielanie
+            if (n < 0) {
+                perror("Error writing to socket");
+            }
+        }
+    }*/
 
     for (int k = 0; k < this->pocetHracov; k++) {
         pthread_join(clients[k], NULL);//Počkáme na dokončenie všetkých spustených vlákien.
@@ -175,7 +178,9 @@ int Server::makeServer(char const* port)
         }
     }
 
+    delete(&threadData.logika);
     pthread_mutex_destroy(&mutex);
+    printf("Server sa ukoncuje!\n");
     close(newsockfd);
     close(sockfd);
 
@@ -228,10 +233,6 @@ void *Server::hra(void *thread_data) {
             for (int i = 0; i < plocha.length(); ++i) {
                 buffer[i] = plocha[i];
             }
-
-
-
-
 
             int n = write(socket, buffer, strlen(buffer)); //posielanie
             if (n < 0) {
