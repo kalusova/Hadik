@@ -204,7 +204,9 @@ void *Server::hra(void *thread_data) {
 
         if(buffer[0] == 'x' && strlen(buffer) == 2){
             koniec = true;
+            pthread_mutex_lock(data->mutex);
             data->body[data->poradie] = hadik->getBodyCislo();
+            pthread_mutex_unlock(data->mutex);
             break;
         } else {
             hadik->move(buffer[0]);
