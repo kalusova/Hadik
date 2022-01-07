@@ -11,6 +11,8 @@ int main(int argc, char const *argv[]){
             //spusti server ./hadik s 4412
             Server* server = new Server();
             server->makeServer(argv[2]);
+
+
         }
         else if (*argv[1] == 'c'){
             //spusti client ./hadik c 4412

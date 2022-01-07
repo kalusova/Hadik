@@ -3,7 +3,7 @@
 //
 
 #include "Server.h"
-#include "Had.h"
+#include "Hadik.h"
 
 Server::Server(){
     pocetHracov = 0;
@@ -13,14 +13,15 @@ Server::Server(){
 struct thread_data {
     volatile int socket;
     pthread_mutex_t *mutex;
-    int suradniceHad [4][2];
-    int ovocieX;
-    int ovocieY;
+    Logika* logika;
+    std::string farba;
+    int poradie;
+
 };
 
 int Server::makeServer(char const* port)
 {
-    char buffer[500];
+    char buffer[1000];
     int sockfd, newsockfd;
     socklen_t cli_len;
     struct sockaddr_in serv_addr, cli_addr;
@@ -29,8 +30,8 @@ int Server::makeServer(char const* port)
 
     // ZISTOVANIE POCTU HRACOV
     printf("Prosím zadajte pocet hracov: \n(cislo od 1 do 4)");
-    bzero(buffer,500);
-    fgets(buffer, 500, stdin);
+    bzero(buffer,1000);
+    fgets(buffer, 1000, stdin);
 
     char znak = buffer[0];
     int cislo = znak - '0';
@@ -38,7 +39,7 @@ int Server::makeServer(char const* port)
     //KONTROLA spravne zadaneho cisla
     if (strlen(buffer)>2){
         printf("Zadana hodnota musi byt cislo! Skus znova. Ak znovu zadáš zle, hra sa vypne.\n");
-        fgets(buffer, 500, stdin);
+        fgets(buffer, 1000, stdin);
         char znak = buffer[0];
         int cislo = znak - '0';
 
@@ -93,6 +94,7 @@ int Server::makeServer(char const* port)
     //vlozenie do zdielanych dat
     struct thread_data threadData;
     threadData.mutex = &mutex;
+    threadData.logika = new Logika();
 
     //vytvorenie tolkych vlakien kolko je pocet hracov
     pthread_t clients [this->pocetHracov];
@@ -102,6 +104,7 @@ int Server::makeServer(char const* port)
         printf("client cislo %i sa PRIPOJIL\n", pocetPripojenych + 1);
         pthread_mutex_lock(threadData.mutex); //zamknutie mutexu kt. riadi pristup k datam - zabezpecenie jedinecneho pristupu
         threadData.socket = newsockfd; //socket pre dane vlakno
+        threadData.poradie = i;
 
         //informovanie klienta o tom ze sa este vsetci nepripojili
         if (i == pocetHracov-1){
@@ -109,8 +112,8 @@ int Server::makeServer(char const* port)
         } else {
             s = "Caka sa na pripojenie vsekych hracov!";
         }
-        bzero(buffer, 500);
-        for (int j = 0; j < 500; j++) {
+        bzero(buffer, 1000);
+        for (int j = 0; j < 1000; j++) {
             buffer[j] = s[j];
         }
         int n = write(newsockfd, buffer, strlen(buffer)); //posielanie
@@ -119,6 +122,7 @@ int Server::makeServer(char const* port)
         }
 
         pthread_mutex_unlock(threadData.mutex); //povolenie pristupu k zapisu do zdielanych dat
+
         if (pthread_create(&clients[i], NULL, &(Server::hra), &threadData) != 0){ // Vytvoríme nové vlákno so zadanými atribútmi, spustíme v ňom funkciu thread_main s ukazovateľom na inštanciu thread_data.
             printf("Failed to create thread\n");
         } else {
@@ -138,14 +142,15 @@ int Server::makeServer(char const* port)
 }
 
 void *Server::hra(void *thread_data) {
-    char buffer[500];
+    char buffer[1000];
+    bool koniec = false;
     struct thread_data * data = (struct thread_data *) thread_data;
     pthread_mutex_lock(data->mutex);
     int socket = data->socket;
-    pthread_mutex_unlock(data->mutex);
+  //  pthread_mutex_unlock(data->mutex);
 
-    bzero(buffer,500);
-    int n = read(socket, buffer, 500);
+    bzero(buffer,1000);
+    int n = read(socket, buffer, 1000);
     if (n < 0)
     {
         perror("Error reading from socket");
@@ -153,12 +158,31 @@ void *Server::hra(void *thread_data) {
     }
     printf("Meno hraca: %s\n", buffer);
 
-    Had* hadik = new Had();
-    hadik->setup();
-    while(hadik->gameover != 1){
-        std::string plocha = hadik->draw();
-        bzero(buffer, 500);
-        for (int i = 0; i < 500; ++i) {
+   // pthread_mutex_lock(data->mutex);
+
+    Hadik* hadik = new Hadik(data->logika);
+    switch(data->poradie){
+        case 0:
+            hadik->setFarba( "\033[31m");
+            break;
+        case 1:
+            hadik->setFarba( "\033[32m");
+            break;
+        case 2:
+            hadik->setFarba( "\033[33m");
+            break;
+        case 3:
+            hadik->setFarba( "\033[34m");
+            break;
+    }
+    pthread_mutex_unlock(data->mutex);
+    hadik->vlozDoPola();
+    Ovocie ovocie;
+
+    while(!koniec) {
+        std::string plocha = data->logika->printBorder();
+        bzero(buffer, 1000);
+        for (int i = 0; i < plocha.length(); ++i) {
             buffer[i] = plocha[i];
         }
 
@@ -167,20 +191,20 @@ void *Server::hra(void *thread_data) {
             perror("Error writing to socket");
         }
 
-        bzero(buffer,500);
-        n = read(socket, buffer, 500);
-        if (n < 0)
-        {
+        bzero(buffer, 1000);
+        n = read(socket, buffer, 1000);
+        if (n < 0) {
             perror("Error reading from socket");
             exit(4);
         }
-      //  printf("klaves: %c", buffer[0]);
 
-
-        hadik->input(buffer[0]);
-        hadik->logic();
-   }
-
+        if(buffer[0] == 'x' && strlen(buffer) == 2){
+            koniec = true;
+            break;
+        } else {
+            hadik->move(buffer[0]);
+        }
+    }
     return nullptr;
 }
 

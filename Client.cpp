@@ -2,6 +2,7 @@
 // Created by Katarína Kalusová on 05/01/2022.
 //
 
+#include <string.h>
 #include "Client.h"
 
 Client::Client(){
@@ -14,7 +15,7 @@ int Client::makeClient(const char* port, const char* host)
     struct hostent* server;
     bool koniec = false;
 
-    char buffer[500];
+    char buffer[1000];
 
     //Použijeme funkciu gethostbyname na získanie informácii o počítači, ktorého hostname je v prvom argumente.
     server = gethostbyname(host);
@@ -50,8 +51,8 @@ int Client::makeClient(const char* port, const char* host)
     }
 
     printf("Prosim zadaj meno: ");
-    bzero(buffer,500);
-    fgets(buffer, 500, stdin);
+    bzero(buffer,1000);
+    fgets(buffer, 1000, stdin);
 
     n = write(sockfd, buffer, strlen(buffer));
     if (n < 0)
@@ -60,8 +61,8 @@ int Client::makeClient(const char* port, const char* host)
         return 5;
     }
 
-    bzero(buffer,500);
-    n = read(sockfd, buffer, 500);
+    bzero(buffer,1000);
+    n = read(sockfd, buffer, 1000);
     if (n < 0)
     {
         perror("Error reading from socket");
@@ -69,13 +70,13 @@ int Client::makeClient(const char* port, const char* host)
     }
 
     printf("%s\n",buffer);
-sleep(2);
+
+   // sleep(2);
+
     system("clear");
 
-
-
-    bzero(buffer, 500);
-    n = read(sockfd, buffer, 500);
+    bzero(buffer, 1000);
+    n = read(sockfd, buffer, 1000);
     if (n < 0) {
         perror("Error reading from socket");
         return 6;
@@ -83,11 +84,10 @@ sleep(2);
 
     printf("%s\n", buffer);
 
-
     while(!koniec) {
         printf("Prosim zadaj klaves: ");
-        bzero(buffer,500);
-        fgets(buffer, 500, stdin);
+        bzero(buffer,1000);
+        fgets(buffer, 1000, stdin);
 
         n = write(sockfd, buffer, strlen(buffer));
         if (n < 0)
@@ -101,9 +101,9 @@ sleep(2);
             break;
         }
 
-        system("clear");
-        bzero(buffer, 500);
-        n = read(sockfd, buffer, 500);
+      //  system("clear");
+        bzero(buffer, 1000);
+        n = read(sockfd, buffer, 1000);
         if (n < 0) {
             perror("Error reading from socket");
             return 6;
