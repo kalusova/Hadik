@@ -50,17 +50,6 @@ int Client::makeClient(const char* port, const char* host)
         return 4;
     }
 
-    printf("Prosim zadaj meno: ");
-    bzero(buffer,1000);
-    fgets(buffer, 1000, stdin);
-
-    n = write(sockfd, buffer, strlen(buffer));
-    if (n < 0)
-    {
-        perror("Error writing to socket");
-        return 5;
-    }
-
     bzero(buffer,1000);
     n = read(sockfd, buffer, 1000);
     if (n < 0)
@@ -73,7 +62,7 @@ int Client::makeClient(const char* port, const char* host)
 
    // sleep(2);
 
-    system("clear");
+  //  system("clear");
 
     bzero(buffer, 1000);
     n = read(sockfd, buffer, 1000);
@@ -85,6 +74,12 @@ int Client::makeClient(const char* port, const char* host)
     printf("%s\n", buffer);
 
     while(!koniec) {
+
+        if(buffer[0] == 'x' && strlen(buffer) == 2){
+            koniec = true;
+            break;
+        }
+
         printf("Prosim zadaj klaves: ");
         bzero(buffer,1000);
         fgets(buffer, 1000, stdin);
@@ -100,7 +95,6 @@ int Client::makeClient(const char* port, const char* host)
             koniec = true;
             break;
         }
-
       //  system("clear");
         bzero(buffer, 1000);
         n = read(sockfd, buffer, 1000);
@@ -110,6 +104,7 @@ int Client::makeClient(const char* port, const char* host)
         }
 
         printf("%s\n", buffer);
+
     }
 
     system("clear");

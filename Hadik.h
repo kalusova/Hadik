@@ -35,6 +35,7 @@ public:
     const std::string &getMeno() const;
 
     void setMeno(const std::string &meno);
+    void setXY(int pX, int pY);
 
 private:
     int x;

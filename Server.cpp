@@ -17,6 +17,8 @@ struct thread_data {
     std::string farba;
     int poradie;
     int body[4][2];
+    int pocetHrac;
+    int pocetPripoj;
 };
 
 int Server::makeServer(char const* port)
@@ -85,6 +87,9 @@ int Server::makeServer(char const* port)
         return 2;
     }
 
+
+
+
     //Pripravíme socket pre príjmanie spojení od klientov. Maximálna dĺžka fronty neobslúžených spojení je 4.
     listen(sockfd, 4);
     cli_len = sizeof(cli_addr);
@@ -97,6 +102,8 @@ int Server::makeServer(char const* port)
     struct thread_data threadData;
     threadData.mutex = &mutex;
     threadData.logika = new Logika();
+    threadData.pocetHrac = 0;
+    threadData.pocetPripoj = 0;
 
     for(int i = 0; i < 4; i++){
         threadData.body[i][1] =0 ;
@@ -113,6 +120,7 @@ int Server::makeServer(char const* port)
         pthread_mutex_lock(threadData.mutex); //zamknutie mutexu kt. riadi pristup k datam - zabezpecenie jedinecneho pristupu
         threadData.socket[i] = newsockfd; //socket pre dane vlakno
         threadData.poradie = i;
+        threadData.pocetHrac = pocetHracov;
 
         //informovanie klienta o tom ze sa este vsetci nepripojili
         if (i == pocetHracov-1){
@@ -135,11 +143,16 @@ int Server::makeServer(char const* port)
             printf("Failed to create thread\n");
         } else {
             pocetPripojenych++;
+            pthread_mutex_lock(threadData.mutex);
+            threadData.pocetPripoj = pocetPripojenych;
+            pthread_mutex_unlock(threadData.mutex);
         }
     }
 
+
+
     for (int k = 0; k < this->pocetHracov; k++) {
-        pthread_join(clients[k], NULL); //Počkáme na dokončenie všetkých spustených vlákien.
+        pthread_join(clients[k], NULL);//Počkáme na dokončenie všetkých spustených vlákien.
     }
 
     for (int i = 0; i < 2; i++) {
@@ -147,9 +160,11 @@ int Server::makeServer(char const* port)
         if(threadData.body[1][1] > threadData.body[2][1]) {
             s = "Vyhral hrac s cislom " + std::to_string(threadData.body[1][0]);
             s += " s poctom bodov " +  std::to_string(threadData.body[1][1]);
-        } else {
+        } else if(threadData.body[1][1] < threadData.body[2][1]) {
             s = "Vyhral hrac s cislom " + std::to_string(threadData.body[2][0]);
             s += " s poctom bodov " +  std::to_string(threadData.body[2][1]);
+        } else {
+            s = "REMIZA";
         }
         for (int j = 0; j < 1000; j++) {
             buffer[j] = s[j];
@@ -159,22 +174,6 @@ int Server::makeServer(char const* port)
             perror("Error writing to socket");
         }
     }
-   /* bzero(buffer, 1000);
-    if(threadData.body[1][1] > threadData.body[2][1]) {
-        s = "Vyhral hrac s cislom " + std::to_string(threadData.body[1][0]);
-        s += " s poctom bodov " +  std::to_string(threadData.body[1][1]);
-    } else {
-        s = "Vyhral hrac s cislom " + std::to_string(threadData.body[2][0]);
-        s += " s poctom bodov " +  std::to_string(threadData.body[2][1]);
-    }
-    for (int j = 0; j < 1000; j++) {
-        buffer[j] = s[j];
-    }
-    n = write(newsockfd, buffer, strlen(buffer)); //posielanie
-    if (n < 0) {
-        perror("Error writing to socket");
-    }*/
-
 
     pthread_mutex_destroy(&mutex);
     close(newsockfd);
@@ -191,21 +190,6 @@ void *Server::hra(void *thread_data) {
     pthread_mutex_lock(data->mutex);
     int socket = data->socket[data->poradie];
 
-  //  pthread_mutex_unlock(data->mutex);
-
-    bzero(buffer,1000);
-    int n = read(socket, buffer, 1000);
-    if (n < 0)
-    {
-        perror("Error reading from socket");
-        exit(4);
-    }
-    printf("Meno hraca: %s\n", buffer);
-
-
-
-   // pthread_mutex_lock(data->mutex);
-
     Hadik* hadik = new Hadik(data->logika);
 
     hadik->setMeno(buffer);
@@ -213,55 +197,66 @@ void *Server::hra(void *thread_data) {
     switch(data->poradie){
         case 0:
             hadik->setPoradie(1);
+            hadik->setXY(2,2);
             hadik->setFarba( "\033[31m");
             break;
         case 1:
             hadik->setPoradie(2);
+            hadik->setXY(2,4);
             hadik->setFarba( "\033[32m");
             break;
         case 2:
             hadik->setPoradie(3);
+            hadik->setXY(2,6);
             hadik->setFarba( "\033[33m");
             break;
         case 3:
             hadik->setPoradie(4);
+            hadik->setXY(2,8);
             hadik->setFarba( "\033[34m");
             break;
     }
     pthread_mutex_unlock(data->mutex);
     hadik->vlozDoPola();
-
+    std::string plocha = "";
+    printf("Pocet pripojenych : %d, pocet hracov : %d",  data->pocetPripoj, data->pocetHrac);
     while(!koniec) {
-        std::string plocha = data->logika->printBorder();
-        plocha += hadik->getBody();
-        bzero(buffer, 1000);
-        for (int i = 0; i < plocha.length(); ++i) {
-            buffer[i] = plocha[i];
-        }
+        if(data->pocetPripoj == data->pocetHrac) {
+            plocha = data->logika->printBorder();
+            plocha += hadik->getBody();
+            bzero(buffer, 1000);
+            for (int i = 0; i < plocha.length(); ++i) {
+                buffer[i] = plocha[i];
+            }
 
-        n = write(socket, buffer, strlen(buffer)); //posielanie
-        if (n < 0) {
-            perror("Error writing to socket");
-        }
 
-        bzero(buffer, 1000);
-        n = read(socket, buffer, 1000);
-        if (n < 0) {
-            perror("Error reading from socket");
-            exit(4);
-        }
 
-        if(buffer[0] == 'x' && strlen(buffer) == 2){
-            koniec = true;
-            pthread_mutex_lock(data->mutex);
-            data->body[hadik->getPoradie()][0] = hadik->getPoradie();
-            data->body[hadik->getPoradie()][1] = hadik->getBodyCislo();
-            pthread_mutex_unlock(data->mutex);
+
+
+            int n = write(socket, buffer, strlen(buffer)); //posielanie
+            if (n < 0) {
+                perror("Error writing to socket");
+            }
 
             bzero(buffer, 1000);
-            break;
-        } else {
-            hadik->move(buffer[0]);
+            n = read(socket, buffer, 1000);
+            if (n < 0) {
+                perror("Error reading from socket");
+                exit(4);
+            }
+
+            if (buffer[0] == 'x' && strlen(buffer) == 2) {
+                koniec = true;
+                pthread_mutex_lock(data->mutex);
+                data->body[hadik->getPoradie()][0] = hadik->getPoradie();
+                data->body[hadik->getPoradie()][1] = hadik->getBodyCislo();
+                pthread_mutex_unlock(data->mutex);
+
+                bzero(buffer, 1000);
+                break;
+            } else {
+                hadik->move(buffer[0]);
+            }
         }
     }
     return nullptr;

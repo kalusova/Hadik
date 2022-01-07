@@ -12,8 +12,8 @@
 #define BLUE    "\033[34m"      /* Blue */
 
 Hadik::Hadik(Logika *pPravidla) {
-    this->x = rand() % 4;
-    this->y = 2;
+    this->x = 0;
+    this->y = 0;
     this->pole =  pPravidla->getPole();
     this->smer = "pravo";
     this->dlzka = 0;
@@ -84,7 +84,8 @@ void Hadik::goTo(int px, int py) {
 }
 
 std::string Hadik::getBody() const {
-    std::string s = "Skore je: " + std::to_string(this->body);
+    std::string s = "Si hrac cislo " + std::to_string(this->poradie);
+        s += " a tvoje skore je: " + std::to_string(this->body);
     return s + "\n";
 }
 
@@ -177,6 +178,11 @@ void Hadik::setSmer(char pSmer) {
 
 void Hadik::vlozDoPola() {
     this->pole[this->x][this->y] = this->farba + ">" + "\033[0m";
+}
+
+void Hadik::setXY(int pX, int pY){
+    this->x = pX;
+    this->y = pY;
 }
 
 

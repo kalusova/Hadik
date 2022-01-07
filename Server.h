@@ -21,13 +21,17 @@
 
 class Server {
 private:
-    int pocetHracov;
+    int pocetHracov ;
     int pocetPripojenych;
 
 public:
     Server();
     int makeServer(const char* port);
     static void* hra(void * thread_data);
+
+    static int getPocetHracov() ;
+
+    static int getPocetPripojenych() ;
 
 };
 
