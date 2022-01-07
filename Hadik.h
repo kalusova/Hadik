@@ -25,7 +25,7 @@ public:
     void pridajDlzku();
     void setSmer(char pSmer);
     void vlozDoPola();
-
+    int getBodyCislo();
     std::string getBody() const;
 
 private:
@@ -38,6 +38,7 @@ private:
     Logika *pravidla;
     int body;
     bool koniec;
+
 };
 
 #endif //SEMESTRALKA_HADIK_H

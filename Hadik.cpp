@@ -69,7 +69,10 @@ void Hadik::goTo(int px, int py) {
 std::string Hadik::getBody() const {
     std::string s = "Skore je: " + std::to_string(this->body);
     return s + "\n";
+}
 
+int Hadik::getBodyCislo(){
+    return this->body;
 }
 
 bool Hadik::move(char znak) {

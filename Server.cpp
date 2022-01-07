@@ -16,7 +16,7 @@ struct thread_data {
     Logika* logika;
     std::string farba;
     int poradie;
-
+    int body[4];
 };
 
 int Server::makeServer(char const* port)
@@ -134,6 +134,10 @@ int Server::makeServer(char const* port)
         pthread_join(clients[k], NULL); //Počkáme na dokončenie všetkých spustených vlákien.
     }
 
+    for (int i = 0; i < pocetHracov; i++) {
+        printf("Body hraca %d : %d", i+1, threadData.body[i]);
+    }
+
     pthread_mutex_destroy(&mutex);
     close(newsockfd);
     close(sockfd);
@@ -200,6 +204,7 @@ void *Server::hra(void *thread_data) {
 
         if(buffer[0] == 'x' && strlen(buffer) == 2){
             koniec = true;
+            data->body[data->poradie] = hadik->getBodyCislo();
             break;
         } else {
             hadik->move(buffer[0]);
