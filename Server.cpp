@@ -138,9 +138,9 @@ int Server::makeServer(char const* port)
         pthread_join(clients[k], NULL); //Počkáme na dokončenie všetkých spustených vlákien.
     }
 
-    for (int i = 0; i < pocetHracov; i++) {
+  /*  for (int i = 0; i < pocetHracov; i++) {
         printf("Body hraca %d : %d", i+1, threadData.body[i]);
-    }
+    }*/
 
     pthread_mutex_destroy(&mutex);
     close(newsockfd);
@@ -210,12 +210,16 @@ void *Server::hra(void *thread_data) {
         if(buffer[0] == 'x' && strlen(buffer) == 2){
             koniec = true;
             pthread_mutex_lock(data->mutex);
-            data->body[data->poradie] = hadik->getBodyCislo();
+            printf("hrac cislo %d: body : %d" , data->poradie, hadik->getBodyCislo());
+
+            //data->body[data->poradie] = hadik->getBodyCislo();
             pthread_mutex_unlock(data->mutex);
             break;
         } else {
             hadik->move(buffer[0]);
         }
+
+
     }
     return nullptr;
 }
