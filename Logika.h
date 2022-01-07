@@ -18,6 +18,7 @@ public:
     //std::string vypisPole();
     std::string **getPole();
     void setPole(std::string **pole);
+    void vytvorOvocie();
 
     ~Logika(){
         for(int i = 0; i < 20; i++) {
@@ -26,9 +27,17 @@ public:
         delete[] pole;
     }
 
+    int getOvocieX() const;
+
+    int getOvocieY() const;
+
+    void setZjedeny(bool zjedeny);
+
 private:
     std::string** pole = new string*[20];
-
+    bool zjedeny;
+    int ovocieX;
+    int ovocieY;
 };
 
 #endif //SEMESTRALKA_PRAVIDLA_H

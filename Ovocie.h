@@ -28,7 +28,7 @@ public:
 
     void setZjedeny(bool pZjedeny) {
         this->zjedeny = pZjedeny;
-        this->pole[x][y] = "  ";
+        this->pole[x][y] = " ";
         this->vytvorNovyObjekt();
     }
 
@@ -48,7 +48,7 @@ public:
         if(zjedeny== true){
             this->x = rand() % 17 + 1;
             this->y = rand() % 17 + 1;
-            this->pole[x][y] = "? ";
+            this->pole[x][y] = "?";
             this->zjedeny = false;
             this->pocetBodov = rand() % 4 + 1;
         }

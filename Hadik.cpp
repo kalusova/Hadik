@@ -19,7 +19,7 @@ Hadik::Hadik(Logika *pPravidla) {
     this->dlzka = 0;
     this->pravidla = pPravidla;
     this->koniec = false;
-
+    this->body = 0;
 }
 
 void Hadik::goTo(int px, int py) {
@@ -46,7 +46,7 @@ void Hadik::goTo(int px, int py) {
       //  usleep(1000000);
     }
     if(this->smer == "hore") {
-        this->pole[this->x-k][this->y] = this->farba + "^" + "\033[0m";
+        this->pole[this->x-k][this->y] = this->farba + "A" + "\033[0m";
         this->pole[this->x-k+1][this->y] = " ";
         pravidla->printBorder();
         k++;
@@ -59,6 +59,17 @@ void Hadik::goTo(int px, int py) {
         l++;
       //  usleep(1000000);
     }
+
+    if(this->x == this->pravidla->getOvocieX() && this->y == this->pravidla->getOvocieY()) {
+        this->pravidla->setZjedeny(true);
+        this->body += 10;
+    }
+}
+
+std::string Hadik::getBody() const {
+    std::string s = "Skore je: " + std::to_string(this->body);
+    return s + "\n";
+
 }
 
 bool Hadik::move(char znak) {

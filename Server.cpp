@@ -177,10 +177,10 @@ void *Server::hra(void *thread_data) {
     }
     pthread_mutex_unlock(data->mutex);
     hadik->vlozDoPola();
-    Ovocie ovocie;
 
     while(!koniec) {
         std::string plocha = data->logika->printBorder();
+        plocha += hadik->getBody();
         bzero(buffer, 1000);
         for (int i = 0; i < plocha.length(); ++i) {
             buffer[i] = plocha[i];

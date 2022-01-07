@@ -11,6 +11,7 @@ Logika::Logika() {
             pole[i][j] = " ";
         }
     }
+    this->zjedeny = true;
 }
 
 std::string Logika::printBorder() {
@@ -22,6 +23,8 @@ std::string Logika::printBorder() {
         pole[i][0] = "*";
         pole[i][19] = "*";
     }
+
+    this->vytvorOvocie();
 
     for (int j = 0; j < 20; j++) {
         for (int i = 0; i < 20; i++) {
@@ -41,8 +44,27 @@ void Logika::setPole(std::string **pole) {
     this->pole = pole;
 }
 
+void Logika::vytvorOvocie() {
+    if(zjedeny== true){
+      this->ovocieX = rand() % 17 + 1;
+      this->ovocieY = rand() % 17 + 1;
+        this->pole[ovocieX][ovocieY] = "?";
+        this->zjedeny = false;
+    }
+}
+
+int Logika::getOvocieX() const {
+    return ovocieX;
+}
+
+int Logika::getOvocieY() const {
+    return ovocieY;
+}
 
 
+void Logika::setZjedeny(bool zjedeny) {
+    Logika::zjedeny = zjedeny;
+}
 
 
 

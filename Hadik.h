@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <unistd.h>
-#include "Ovocie.h"
+#include "Logika.h"
 
 #ifndef SEMESTRALKA_HADIK_H
 #define SEMESTRALKA_HADIK_H
@@ -14,7 +14,6 @@ using namespace std;
 class Hadik{
 public:
     explicit Hadik( Logika *pPravidla);
-  //  void zobrazSa(int px, int py);
     bool move(char znak);
     std::string getFarba() const;
     void setFarba(const std::string &pfarba);
@@ -25,7 +24,10 @@ public:
     void goTo(int px, int py);
     void pridajDlzku();
     void setSmer(char pSmer);
-void vlozDoPola();
+    void vlozDoPola();
+
+    std::string getBody() const;
+
 private:
     int x;
     int y;
