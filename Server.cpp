@@ -11,7 +11,7 @@ Server::Server(){
 }
 
 struct thread_data {
-    volatile int socket;
+    volatile int socket[2];
     pthread_mutex_t *mutex;
     Logika* logika;
     std::string farba;
@@ -111,7 +111,7 @@ int Server::makeServer(char const* port)
         newsockfd = accept(sockfd, (struct sockaddr*) &cli_addr, &cli_len);  //Počkáme na a príjmeme spojenie od klienta.
         printf("client cislo %i sa PRIPOJIL\n", pocetPripojenych + 1);
         pthread_mutex_lock(threadData.mutex); //zamknutie mutexu kt. riadi pristup k datam - zabezpecenie jedinecneho pristupu
-        threadData.socket = newsockfd; //socket pre dane vlakno
+        threadData.socket[i] = newsockfd; //socket pre dane vlakno
         threadData.poradie = i;
 
         //informovanie klienta o tom ze sa este vsetci nepripojili
@@ -142,9 +142,39 @@ int Server::makeServer(char const* port)
         pthread_join(clients[k], NULL); //Počkáme na dokončenie všetkých spustených vlákien.
     }
 
-   for (int i = 1; i < pocetHracov+1; i++) {
-        printf("Body hraca %d : %d \n", threadData.body[i][0], threadData.body[i][1]);
+    for (int i = 0; i < 2; i++) {
+        bzero(buffer, 1000);
+        if(threadData.body[1][1] > threadData.body[2][1]) {
+            s = "Vyhral hrac s cislom " + std::to_string(threadData.body[1][0]);
+            s += " s poctom bodov " +  std::to_string(threadData.body[1][1]);
+        } else {
+            s = "Vyhral hrac s cislom " + std::to_string(threadData.body[2][0]);
+            s += " s poctom bodov " +  std::to_string(threadData.body[2][1]);
+        }
+        for (int j = 0; j < 1000; j++) {
+            buffer[j] = s[j];
+        }
+        n = write(threadData.socket[i], buffer, strlen(buffer)); //posielanie
+        if (n < 0) {
+            perror("Error writing to socket");
+        }
     }
+   /* bzero(buffer, 1000);
+    if(threadData.body[1][1] > threadData.body[2][1]) {
+        s = "Vyhral hrac s cislom " + std::to_string(threadData.body[1][0]);
+        s += " s poctom bodov " +  std::to_string(threadData.body[1][1]);
+    } else {
+        s = "Vyhral hrac s cislom " + std::to_string(threadData.body[2][0]);
+        s += " s poctom bodov " +  std::to_string(threadData.body[2][1]);
+    }
+    for (int j = 0; j < 1000; j++) {
+        buffer[j] = s[j];
+    }
+    n = write(newsockfd, buffer, strlen(buffer)); //posielanie
+    if (n < 0) {
+        perror("Error writing to socket");
+    }*/
+
 
     pthread_mutex_destroy(&mutex);
     close(newsockfd);
@@ -159,7 +189,7 @@ void *Server::hra(void *thread_data) {
     bool koniec = false;
     struct thread_data * data = (struct thread_data *) thread_data;
     pthread_mutex_lock(data->mutex);
-    int socket = data->socket;
+    int socket = data->socket[data->poradie];
 
   //  pthread_mutex_unlock(data->mutex);
 
@@ -227,6 +257,8 @@ void *Server::hra(void *thread_data) {
             data->body[hadik->getPoradie()][0] = hadik->getPoradie();
             data->body[hadik->getPoradie()][1] = hadik->getBodyCislo();
             pthread_mutex_unlock(data->mutex);
+
+            bzero(buffer, 1000);
             break;
         } else {
             hadik->move(buffer[0]);

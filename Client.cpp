@@ -112,6 +112,16 @@ int Client::makeClient(const char* port, const char* host)
         printf("%s\n", buffer);
     }
 
+    system("clear");
+
+    bzero(buffer, 1000);
+    n = read(sockfd, buffer, 1000);
+    if (n < 0) {
+        perror("Error reading from socket");
+        return 6;
+    }
+
+    printf("%s\n", buffer);
 
     close(sockfd);
     return 0;
