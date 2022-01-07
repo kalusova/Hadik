@@ -28,6 +28,10 @@ public:
     int getBodyCislo();
     std::string getBody() const;
 
+    void setPoradie(int poradie);
+
+    int getPoradie() const;
+
 private:
     int x;
     int y;
@@ -38,6 +42,7 @@ private:
     Logika *pravidla;
     int body;
     bool koniec;
+    int poradie;
 
 };
 

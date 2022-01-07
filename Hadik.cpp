@@ -20,6 +20,15 @@ Hadik::Hadik(Logika *pPravidla) {
     this->pravidla = pPravidla;
     this->koniec = false;
     this->body = 0;
+    this->poradie = 0;
+}
+
+void Hadik::setPoradie(int poradie) {
+    Hadik::poradie = poradie;
+}
+
+int Hadik::getPoradie() const {
+    return poradie;
 }
 
 void Hadik::goTo(int px, int py) {

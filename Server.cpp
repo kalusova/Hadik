@@ -170,6 +170,7 @@ void *Server::hra(void *thread_data) {
    // pthread_mutex_lock(data->mutex);
 
     Hadik* hadik = new Hadik(data->logika);
+    hadik->setPoradie(data->poradie);
     switch(data->poradie){
         case 0:
             hadik->setFarba( "\033[31m");
@@ -210,7 +211,7 @@ void *Server::hra(void *thread_data) {
         if(buffer[0] == 'x' && strlen(buffer) == 2){
             koniec = true;
             pthread_mutex_lock(data->mutex);
-            printf("hrac cislo %d: body : %d" , data->poradie, hadik->getBodyCislo());
+            printf("hrac cislo %d: body : %d" , hadik->getPoradie(), hadik->getBodyCislo());
 
             //data->body[data->poradie] = hadik->getBodyCislo();
             pthread_mutex_unlock(data->mutex);
