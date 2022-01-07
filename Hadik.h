@@ -32,6 +32,10 @@ public:
 
     int getPoradie() const;
 
+    const std::string &getMeno() const;
+
+    void setMeno(const std::string &meno);
+
 private:
     int x;
     int y;
@@ -43,6 +47,7 @@ private:
     int body;
     bool koniec;
     int poradie;
+    std::string meno;
 
 };
 

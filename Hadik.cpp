@@ -31,6 +31,14 @@ int Hadik::getPoradie() const {
     return poradie;
 }
 
+const std::string &Hadik::getMeno() const {
+    return meno;
+}
+
+void Hadik::setMeno(const std::string &meno) {
+    Hadik::meno = meno;
+}
+
 void Hadik::goTo(int px, int py) {
     this->pole[this->x][this->y] = " ";
     this->setX(px);

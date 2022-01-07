@@ -16,7 +16,7 @@ struct thread_data {
     Logika* logika;
     std::string farba;
     int poradie;
-    int body[4];
+    int body[4][2];
 };
 
 int Server::makeServer(char const* port)
@@ -27,6 +27,8 @@ int Server::makeServer(char const* port)
     struct sockaddr_in serv_addr, cli_addr;
     int n;
     std::string s;
+
+    srand(time(NULL));
 
     // ZISTOVANIE POCTU HRACOV
     printf("Prosím zadajte pocet hracov: \n(cislo od 1 do 4)");
@@ -97,8 +99,10 @@ int Server::makeServer(char const* port)
     threadData.logika = new Logika();
 
     for(int i = 0; i < 4; i++){
-        threadData.body[i] =0 ;
+        threadData.body[i][1] =0 ;
+        threadData.body[i][0] =0 ;
     }
+
 
     //vytvorenie tolkych vlakien kolko je pocet hracov
     pthread_t clients [this->pocetHracov];
@@ -138,9 +142,9 @@ int Server::makeServer(char const* port)
         pthread_join(clients[k], NULL); //Počkáme na dokončenie všetkých spustených vlákien.
     }
 
-  /*  for (int i = 0; i < pocetHracov; i++) {
-        printf("Body hraca %d : %d", i+1, threadData.body[i]);
-    }*/
+   for (int i = 1; i < pocetHracov+1; i++) {
+        printf("Body hraca %d : %d \n", threadData.body[i][0], threadData.body[i][1]);
+    }
 
     pthread_mutex_destroy(&mutex);
     close(newsockfd);
@@ -150,6 +154,7 @@ int Server::makeServer(char const* port)
 }
 
 void *Server::hra(void *thread_data) {
+
     char buffer[1000];
     bool koniec = false;
     struct thread_data * data = (struct thread_data *) thread_data;
@@ -167,21 +172,29 @@ void *Server::hra(void *thread_data) {
     }
     printf("Meno hraca: %s\n", buffer);
 
+
+
    // pthread_mutex_lock(data->mutex);
 
     Hadik* hadik = new Hadik(data->logika);
-    hadik->setPoradie(data->poradie);
+
+    hadik->setMeno(buffer);
+
     switch(data->poradie){
         case 0:
+            hadik->setPoradie(1);
             hadik->setFarba( "\033[31m");
             break;
         case 1:
+            hadik->setPoradie(2);
             hadik->setFarba( "\033[32m");
             break;
         case 2:
+            hadik->setPoradie(3);
             hadik->setFarba( "\033[33m");
             break;
         case 3:
+            hadik->setPoradie(4);
             hadik->setFarba( "\033[34m");
             break;
     }
@@ -211,16 +224,13 @@ void *Server::hra(void *thread_data) {
         if(buffer[0] == 'x' && strlen(buffer) == 2){
             koniec = true;
             pthread_mutex_lock(data->mutex);
-            printf("hrac cislo %d: body : %d" , hadik->getPoradie(), hadik->getBodyCislo());
-
-            //data->body[data->poradie] = hadik->getBodyCislo();
+            data->body[hadik->getPoradie()][0] = hadik->getPoradie();
+            data->body[hadik->getPoradie()][1] = hadik->getBodyCislo();
             pthread_mutex_unlock(data->mutex);
             break;
         } else {
             hadik->move(buffer[0]);
         }
-
-
     }
     return nullptr;
 }
