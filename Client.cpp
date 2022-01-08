@@ -121,6 +121,7 @@ int Client::makeClient(const char* port, const char* host)
         }
 
         printf("%s\n", buffer);
+
     }
 
     system("clear");

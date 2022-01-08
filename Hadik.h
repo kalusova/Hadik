@@ -41,10 +41,10 @@ public:
     void setXY(int pX, int pY);
 
     ~Hadik(){
-        for(int i = 0; i < 20; i++) {
+       /* for(int i = 0; i < 20; i++) {
             delete[] pole[i];
         }
-        delete[] pole;
+        delete[] pole;*/
         //delete(pravidla);
         //pravidla = nullptr;
     }

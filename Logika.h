@@ -29,6 +29,13 @@ public:
 
     void setZjedeny(bool zjedeny);
 
+    ~Logika(){
+        for(int i = 0; i < 20; i++) {
+            delete[] pole[i];
+        }
+        delete[] pole;
+    }
+
 private:
     std::string** pole = new string*[20];
     bool zjedeny;

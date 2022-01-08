@@ -181,6 +181,28 @@ int Server::makeServer(char const* port)
         pthread_join(clients[k], NULL);//Počkáme na dokončenie všetkých spustených vlákien.
     }
 
+   /* for (int i = 0; i < 4; ++i) {
+        if(threadData.body[i][1] > threadData.body[i+1][1]){
+            printf("Pred\n");
+            printf("Hrac %d , body %d\n", threadData.body[i][0], threadData.body[i][1]);
+            printf("Hrac %d , body %d\n", threadData.body[i+1][0], threadData.body[i+1][1]);
+            for (int j = 0; j < 2; j++) {
+                int *pom = &threadData.body[i][j];
+                threadData.body[i][j] = threadData.body[i+1][j];
+                threadData.body[i+1][j] = *pom;
+            }
+            printf("Po\n");
+            printf("Hrac %d , body %d\n", threadData.body[i][0], threadData.body[i][1]);
+            printf("Hrac %d , body %d\n", threadData.body[i+1][0], threadData.body[i+1][1]);
+        }
+    }*/
+
+
+
+
+
+
+
     for (int i = 0; i < 2; i++) {
         bzero(buffer, 1000);
         if(threadData.body[1][1] > threadData.body[2][1]) {
@@ -289,6 +311,7 @@ void *Server::hra(void *thread_data) {
                 break;
             } else {
                 hadik->move(buffer[0]);
+                bzero(buffer, 1000);
             }
         }
     }
