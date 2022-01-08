@@ -71,12 +71,7 @@ int Client::makeClient(const char* port, const char* host)
         perror("Error reading from socket");
         return 6;
     }
-
     printf("%s\n",buffer);
-
-   // sleep(2);
-
-  //  system("clear");
 
     bzero(buffer, 1000);
     n = read(sockfd, buffer, 1000);
@@ -87,13 +82,7 @@ int Client::makeClient(const char* port, const char* host)
 
     printf("%s\n", buffer);
 
-    while(!koniec) {
-
-        /*if((buffer[0] == 'x' || buffer[0] == 'X') && strlen(buffer) == 2){
-            koniec = true;
-            break;
-        }
-*/
+    do{
         printf("W,A,S,D\n");
         printf("pre ukončenie hry stlač X\n" );
 
@@ -108,23 +97,29 @@ int Client::makeClient(const char* port, const char* host)
             return 5;
         }
 
-        if((buffer[0] == 'x' || buffer[0] == 'X')  && strlen(buffer) == 2){
+        if(buffer[0] == 'x' || buffer[0] == 'X'){
+            printf("Skoncil si hru\n");
             koniec = true;
             break;
         }
-      //  system("clear");
+
         bzero(buffer, 1000);
         n = read(sockfd, buffer, 1000);
         if (n < 0) {
             perror("Error reading from socket");
             return 6;
         }
+        if(buffer[0] == 'x' || buffer[0] == 'X'){
+            printf("Skoncil si hru\n");
+            koniec = true;
+            break;
+        }
 
         printf("%s\n", buffer);
 
-    }
+    }while(!koniec);
 
-    system("clear");
+    //system("clear");
 
     bzero(buffer, 1000);
     n = read(sockfd, buffer, 1000);
@@ -132,7 +127,28 @@ int Client::makeClient(const char* port, const char* host)
         perror("Error reading from socket");
         return 6;
     }
+    printf("%s\n", buffer);
 
+    bzero(buffer,1000);
+    buffer[0] = 'x';
+    buffer[1] = '\n';
+    n = write(sockfd, buffer, strlen(buffer));
+    if (n < 0)
+    {
+        perror("Error writing to socket");
+        return 5;
+    }
+
+    if(buffer[0] == 'x'){
+        printf("hra bola ukoncena\n");
+    }
+
+    bzero(buffer, 1000);
+    n = read(sockfd, buffer, 1000);
+    if (n < 0) {
+        perror("Error reading from socket");
+        return 6;
+    }
     printf("%s\n", buffer);
 
     close(sockfd);

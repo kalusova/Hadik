@@ -30,6 +30,7 @@ struct thread_data {
     int body[4][2];
     int pocetHrac;
     int pocetPripoj;
+    bool hraUkoncena;
 };
 
 /**
@@ -114,6 +115,7 @@ int Server::makeServer(char const *port) {
     threadData.logika = new Logika();
     threadData.pocetHrac = 0;
     threadData.pocetPripoj = 0;
+    threadData.hraUkoncena = true;
 
     for (int i = 0; i < 4; i++) {
         threadData.body[i][1] = 0;
@@ -166,19 +168,8 @@ int Server::makeServer(char const *port) {
         }
     }
 
-    /*  if(buffer[0] == 'x' && strlen(buffer) == 2){
-          for (int i = 0; i < 2; ++i) {
-              n = write(threadData.socket[i], buffer, strlen(buffer)); //posielanie
-              if (n < 0) {
-                  perror("Error writing to socket");
-              }
-          }
-      }*/
-
-
-
     for (int k = 0; k < this->pocetHracov; k++) {
-        pthread_join(clients[k], NULL);//Počkáme na dokončenie všetkých spustených vlákien.
+        pthread_join(clients[k], NULL); //Počkáme na dokončenie všetkých spustených vlákien.
     }
 
     pthread_mutex_lock(threadData.mutex);
@@ -316,7 +307,17 @@ void *Server::hra(void *thread_data) {
                 data->body[hadik->getPoradie() - 1][0] = hadik->getPoradie();
                 data->body[hadik->getPoradie() - 1][1] = hadik->getBodyCislo();
                 pthread_mutex_unlock(data->mutex);
-
+                if(data->hraUkoncena){
+                    for (int i = 0; i < data->pocetHrac; ++i) {
+                        if (socket != data->socket[i]){
+                            int n = write(data->socket[i], buffer, strlen(buffer)); //posielanie
+                            if (n < 0) {
+                                perror("Error writing to socket");
+                            }
+                        }
+                    }
+                }
+                data->hraUkoncena = false;
                 bzero(buffer, 1000);
                 break;
             } else {
@@ -325,6 +326,7 @@ void *Server::hra(void *thread_data) {
             }
         }
     }
+
     delete (hadik);
     return nullptr;
 }
