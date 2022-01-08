@@ -1,9 +1,12 @@
-//
-// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
-//
+/**
+ * @file Client.h
+ * @authors Dominika Barbierikova, Katarina Kalusova
+ * @date 15.12.2021
+ */
 
 #ifndef UNTITLED5_CLIENT_H
 #define UNTITLED5_CLIENT_H
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -21,6 +24,5 @@ public:
     Client();
     int makeClient(const char* port, const char* host);
 };
-
 
 #endif //UNTITLED5_CLIENT_H

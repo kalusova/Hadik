@@ -1,12 +1,27 @@
-//
-// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
-//
+/**
+ * @file Client.cpp
+ * @authors Dominika Barbierikova, Katarina Kalusova
+ * @date 15.12.2021
+ */
 
-#include <string.h>
 #include "Client.h"
 
+
+/**
+ * Konstruktor triedy Client
+ *
+ * Reprezentuje klienta ktorý sa pripája na server
+ * Použitý protokol TCP
+ */
 Client::Client(){
 }
+
+/**
+ * Metoda makeClient() vytvára samotného klienta
+ * @param port urcuje port na ktorý sa chcem pripojit (na ktorom by mal pocuvat server)
+ * @param host je hostname
+ * @return 0 ak vsetko prebehne v poriadku, iné ak nastala chyba
+ */
 int Client::makeClient(const char* port, const char* host)
 {
     int sockfd, n;

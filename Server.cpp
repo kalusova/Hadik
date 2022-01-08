@@ -1,15 +1,27 @@
-//
-// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
-//
+/**
+ * @file Server.cpp
+ * @authors Dominika Barbierikova, Katarina Kalusova
+ * @date 15.12.2021
+ */
 
 #include "Server.h"
 #include "Hadik.h"
 
+/**
+ * Konštruktor triedy Server
+ *
+ * Inicializuje privátne premenné triedy
+ * Reprezentuje server na ktorý sa pripájajú klienti
+ * Použitý protokol TCP
+ */
 Server::Server(){
     pocetHracov = 0;
     pocetPripojenych = 0;
 }
 
+/**
+ * Zdieľané dáta thread_data
+ */
 struct thread_data {
     volatile int socket[4];
     pthread_mutex_t *mutex;
@@ -20,6 +32,11 @@ struct thread_data {
     int pocetPripoj;
 };
 
+/**
+ * Metóda makeServer() vytvára samotný server
+ * @param port určuje číslo portu na ktorý sa budú moct klienti pripajat
+ * @return 0 ak vsetko dopadlo dobre, inak ak nastala chyba
+ */
 int Server::makeServer(char const* port)
 {
     char buffer[1000];
@@ -158,6 +175,8 @@ int Server::makeServer(char const* port)
         }
     }*/
 
+
+
     for (int k = 0; k < this->pocetHracov; k++) {
         pthread_join(clients[k], NULL);//Počkáme na dokončenie všetkých spustených vlákien.
     }
@@ -167,11 +186,13 @@ int Server::makeServer(char const* port)
         if(threadData.body[1][1] > threadData.body[2][1]) {
             s = "Vyhral hrac s cislom " + std::to_string(threadData.body[1][0]);
             s += " s poctom bodov " +  std::to_string(threadData.body[1][1]);
+            s += "\n";
         } else if(threadData.body[1][1] < threadData.body[2][1]) {
             s = "Vyhral hrac s cislom " + std::to_string(threadData.body[2][0]);
             s += " s poctom bodov " +  std::to_string(threadData.body[2][1]);
+            s += "\n";
         } else {
-            s = "REMIZA";
+            s = "REMIZA\n";
         }
         for (int j = 0; j < s.length(); j++) {
             buffer[j] = s[j];
@@ -196,6 +217,11 @@ int Server::makeServer(char const* port)
     return 0;
 }
 
+/**
+ * Metóda hra spusta hru jednotlivym klientom/vlaknam, zavolana je pri vytvoreni vlakna
+ * @param thread_data ako paramteter dostáva ukazovateľ na štruktúru zdieľaných dát
+ * @return nullptr ak vsetko dobre dopadlo
+ */
 void *Server::hra(void *thread_data) {
     char buffer[1000];
     bool koniec = false;
@@ -230,7 +256,7 @@ void *Server::hra(void *thread_data) {
     pthread_mutex_unlock(data->mutex);
     hadik->vlozDoPola();
     std::string plocha = "";
-    printf("Pocet pripojenych : %d, pocet hracov : %d",  data->pocetPripoj, data->pocetHrac);
+    printf("Pocet pripojenych : %d, pocet hracov : %d\n",  data->pocetPripoj, data->pocetHrac);
     while(!koniec) {
         if(data->pocetPripoj == data->pocetHrac) {
             plocha = data->logika->printBorder();
@@ -269,4 +295,9 @@ void *Server::hra(void *thread_data) {
     delete(hadik);
     return nullptr;
 }
+
+/**
+ * Destruktor Servera
+ */
+Server::~Server() = default;
 

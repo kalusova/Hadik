@@ -1,6 +1,8 @@
-//
-// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
-//
+/**
+ * @file Logika.h
+ * @authors Dominika Barbierikova, Katarina Kalusova
+ * @date 15.12.2021
+ */
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -14,8 +16,11 @@ using namespace std;
 class Logika {
 public:
     Logika();
+
     std::string printBorder();
+
     std::string **getPole();
+
     void vytvorOvocie();
 
     int getOvocieX() const;

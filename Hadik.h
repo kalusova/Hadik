@@ -1,6 +1,9 @@
-//
-// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
-//
+/**
+ * @file Hadik.h
+ * @authors Dominika Barbierikova, Katarina Kalusova
+ * @date 15.12.2021
+ */
+
 #include <unistd.h>
 #include "Logika.h"
 
@@ -12,18 +15,31 @@ using namespace std;
 class Hadik{
 public:
     explicit Hadik( Logika *pPravidla);
+
     bool move(char znak);
+
     void setFarba(const std::string &pfarba);
+
     void setX(int px);
+
     void setY(int py);
+
     void goTo(int px, int py);
+
     void setSmer(char pSmer);
+
     void vlozDoPola();
+
     int getBodyCislo();
+
     std::string getBody() const;
+
     void setPoradie(int poradie);
+
     int getPoradie() const;
+
     void setXY(int pX, int pY);
+
     ~Hadik(){
         for(int i = 0; i < 20; i++) {
             delete[] pole[i];

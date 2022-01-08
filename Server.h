@@ -1,6 +1,8 @@
-//
-// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
-//
+/**
+ * @file Server.h
+ * @authors Dominika Barbierikova, Katarina Kalusova
+ * @date 15.12.2021
+ */
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -20,8 +22,12 @@ private:
 
 public:
     Server();
+
     int makeServer(const char* port);
+
     static void* hra(void * thread_data);
+
+    ~Server();
 };
 
 

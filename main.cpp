@@ -1,6 +1,8 @@
-//
-// Created by Dominika Barbieriková & Katarína Kalusová on 15. 12. 2021.
-//
+/**
+ * @file main.cpp
+ * @authors Dominika Barbierikova, Katarina Kalusova
+ * @date 15.12.2021
+ */
 
 #include "Server.h"
 #include "Client.h"
@@ -25,7 +27,5 @@ int main(int argc, char const *argv[]){
     }  else {
         std::cout << "male/velke mnozstvo parametrov";
     }
-
-
     return 0;
 }
